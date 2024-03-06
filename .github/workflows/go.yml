@@ -22,7 +22,7 @@ jobs:
       - name: Install Node.js for frontend dependencies
         uses: actions/setup-node@v4
         with:
-          node-version: '20
+          node-version: '20'
 
       - name: Install dependencies
         run: make deps-frontend deps-backend
