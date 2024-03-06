@@ -8,34 +8,37 @@ on:
 
 jobs:
   build:
+    name: Build with Dependencies
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-          check-latest: true
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+        check-latest: true
 
-      - name: Install Node.js for frontend dependencies
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+    - name: Install Node.js (for frontend dependencies)
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
 
-      - name: Install dependencies
-        run: make deps-frontend deps-backend
+    - name: Install Dependencies
+      run: |
+        make deps-frontend deps-backend
 
-      - name: Build Gitea executable for FreeBSD
-        env:
-          GOOS: freebsd
-          GOARCH: amd64
-        run: |
-          make release
+    - name: Build for FreeBSD
+      env:
+        GOOS: freebsd
+        GOARCH: amd64
+      run: |
+        go build -o gitea
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: gitea-freebsd
-          path: ./gitea
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: gitea-freebsd
+        path: ./gitea
+
