@@ -1,4 +1,4 @@
-name: Build Go Project for FreeBSD
+name: Build Gitea for FreeBSD with Dependencies
 
 on:
   push:
@@ -8,27 +8,34 @@ on:
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version-file: go.mod
-        check-latest: true
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          check-latest: true
 
-    - name: Build for FreeBSD
-      env:
-        GOOS: freebsd
-        GOARCH: amd64
-      run: |
-        go build -o gitea
+      - name: Install Node.js for frontend dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: gitea
-        path: ./gitea
+      - name: Install dependencies
+        run: make deps-frontend deps-backend
+
+      - name: Build Gitea executable for FreeBSD
+        env:
+          GOOS: freebsd
+          GOARCH: amd64
+        run: |
+          make release
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitea-freebsd
+          path: ./gitea
