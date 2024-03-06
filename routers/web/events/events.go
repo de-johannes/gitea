@@ -100,6 +100,9 @@ loop:
 					ctx.Resp.Flush()
 					go unregister()
 					auth.HandleSignOut(ctx)
+					// Set post logout redirect single logout Keycloak-uri here
+					keycloakLogoutURL := "https://id.wielsch.xyz/realms/wielsch/protocol/openid-connect/logout?post_logout_redirect_uri=https://git.kbc.wiki&client_id=gitea"
+					ctx.Redirect(keycloakLogoutURL)
 					break loop
 				}
 				// Replace the event - we don't want to expose the session ID to the user
